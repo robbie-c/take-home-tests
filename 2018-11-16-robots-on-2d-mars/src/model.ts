@@ -1,9 +1,11 @@
+import assert from "assert";
+
 interface Vector2 {
   x: Number;
   y: Number;
 }
 
-enum Direction {
+export enum Direction {
   North,
   South,
   East,
@@ -44,6 +46,27 @@ export const createInitialState = (
       south: new Set(),
       west: new Set(),
       east: new Set()
+    }
+  };
+};
+
+export const startRobot = (
+  state: Readonly<WorldState>,
+  x: Number,
+  y: Number,
+  direction: Direction
+) => {
+  assert(x >= 0);
+  assert(x <= state.maxX);
+  assert(y >= 0);
+  assert(y <= state.maxY);
+  assert(state.currentRobot === undefined);
+
+  return {
+    ...state,
+    currentRobot: {
+      position: { x, y },
+      direction
     }
   };
 };

@@ -1,4 +1,4 @@
-import { createInitialState } from "./model";
+import { createInitialState, Direction, startRobot } from "./model";
 import { expect } from "chai";
 
 describe("model", () => {
@@ -16,5 +16,27 @@ describe("model", () => {
       );
       expect(state.deathScents);
     });
+  });
+
+  describe("startRobot", () => {
+    const maxX = 3;
+    const maxY = 4;
+    const initialState = createInitialState(3, 4);
+
+    it("should add the robot to the state", () => {
+      const x = 1;
+      const y = 2;
+      const direction = Direction.North;
+
+      const state = startRobot(initialState, x, y, direction);
+      const currentRobot = state.currentRobot;
+
+      expect(currentRobot).to.not.be.undefined;
+      expect(currentRobot.position.x).to.eq(x);
+      expect(currentRobot.position.y).to.eq(y);
+      expect(currentRobot.direction).to.eq(direction);
+    });
+
+    // TODO more tests around error checking correctly
   });
 });
