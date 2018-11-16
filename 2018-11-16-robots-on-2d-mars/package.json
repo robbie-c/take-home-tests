@@ -11,9 +11,15 @@
   },
   "scripts": {
     "start": "ts-node src/cli.ts",
+    "test": "jest",
     "prettier": "prettier --write **/*.ts"
   },
   "devDependencies": {
-    "prettier": "^1.15.2"
+    "@types/chai": "^4.1.7",
+    "@types/jest": "^23.3.9",
+    "chai": "^4.2.0",
+    "jest": "^23.6.0",
+    "prettier": "^1.15.2",
+    "ts-jest": "^23.10.4"
   }
 }
