@@ -1,0 +1,15 @@
+{
+  "name": "2018-11-16-robots-on-2d-mars",
+  "version": "1.0.0",
+  "main": "src/cli.ts",
+  "repository": "https://github.com/robbie-c/take-home-tests",
+  "license": "n/a",
+  "private": true,
+  "dependencies": {
+    "ts-node": "^7.0.1",
+    "typescript": "^3.1.6"
+  },
+  "scripts": {
+    "start": "ts-node src/cli.ts"
+  }
+}
