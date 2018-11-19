@@ -3,6 +3,7 @@ import {
   Direction,
   moveForward,
   startRobot,
+  turnRight,
   Vector2,
   WorldState
 } from "./model";
@@ -237,6 +238,59 @@ describe("model", () => {
           );
           const actual = moveForward(initialState);
           expect(actual).toEqual(initialState);
+        });
+      });
+    });
+  });
+
+  describe("turn", () => {
+    const buildStateWithRobotWithDirection = (
+      direction: Direction
+    ): WorldState => {
+      return {
+        currentRobot: {
+          position: { x: 0, y: 0 },
+          direction,
+          isAlive: true
+        },
+        pastRobots: [],
+        maxX: 1,
+        maxY: 1
+      };
+    };
+
+    describe("right", () => {
+      [
+        {
+          initialDirection: Direction.North,
+          expectedDirection: Direction.East,
+          description: "from north"
+        },
+        {
+          initialDirection: Direction.East,
+          expectedDirection: Direction.South,
+          description: "from east"
+        },
+        {
+          initialDirection: Direction.South,
+          expectedDirection: Direction.West,
+          description: "from south"
+        },
+        {
+          initialDirection: Direction.West,
+          expectedDirection: Direction.North,
+          description: "from west"
+        }
+      ].forEach(({ initialDirection, expectedDirection, description }) => {
+        it(description, () => {
+          const initialState = buildStateWithRobotWithDirection(
+            initialDirection
+          );
+          const expectedState = buildStateWithRobotWithDirection(
+            expectedDirection
+          );
+          const actualState = turnRight(initialState);
+          expect(actualState).toEqual(expectedState);
         });
       });
     });

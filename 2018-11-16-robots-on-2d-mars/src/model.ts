@@ -75,7 +75,6 @@ const getNewPosition = (position: Vector2, direction: Direction) => {
 };
 
 export const moveForward = (state: Readonly<WorldState>): WorldState => {
-  assert(!!state.currentRobot);
   if (!state.currentRobot) {
     // throw here rather than just assert, as a hint to the type checker
     throw new assert.AssertionError({ message: "No current robot" });
@@ -123,5 +122,32 @@ export const moveForward = (state: Readonly<WorldState>): WorldState => {
     ...state,
     currentRobot: nextCurrentRobot,
     pastRobots: nextPastRobots
+  };
+};
+
+export const getRightDirection = (direction: Direction): Direction => {
+  switch (direction) {
+    case Direction.North:
+      return Direction.East;
+    case Direction.East:
+      return Direction.South;
+    case Direction.South:
+      return Direction.West;
+    case Direction.West:
+      return Direction.North;
+  }
+};
+
+export const turnRight = (state: Readonly<WorldState>): WorldState => {
+  if (!state.currentRobot) {
+    // throw here rather than just assert, as a hint to the type checker
+    throw new assert.AssertionError({ message: "No current robot" });
+  }
+  return {
+    ...state,
+    currentRobot: {
+      ...state.currentRobot,
+      direction: getRightDirection(state.currentRobot.direction)
+    }
   };
 };
