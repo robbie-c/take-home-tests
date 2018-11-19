@@ -83,14 +83,32 @@ export const moveForward = (state: Readonly<WorldState>): WorldState => {
   const { direction, position } = state.currentRobot;
 
   const newPosition = getNewPosition(position, direction);
+  const { x, y } = newPosition;
 
-  const nextCurrentRobot: Robot | undefined = {
-    ...state.currentRobot,
-    position: newPosition
-  };
+  let nextCurrentRobot;
+  let nextPastRobots;
+  if (x < 0 || x > state.maxX || y < 0 || y > state.maxY) {
+    // fall off and die
+    nextPastRobots = [
+      ...state.pastRobots,
+      {
+        position: newPosition,
+        direction,
+        isAlive: false
+      }
+    ];
+    nextCurrentRobot = undefined;
+  } else {
+    nextPastRobots = state.pastRobots;
+    nextCurrentRobot = {
+      ...state.currentRobot,
+      position: newPosition
+    };
+  }
 
   return {
     ...state,
-    currentRobot: nextCurrentRobot
+    currentRobot: nextCurrentRobot,
+    pastRobots: nextPastRobots
   };
 };

@@ -43,25 +43,42 @@ describe("model", () => {
   });
 
   describe("moveForward", () => {
-    describe("happy case when there is no edge", () => {
-      const maxX = 1;
-      const maxY = 1;
-      const buildStateWithRobot = (
-        position: Vector2,
-        direction: Direction
-      ): WorldState => {
-        return {
-          currentRobot: {
+    const maxX = 1;
+    const maxY = 1;
+    const buildStateWithRobot = (
+      position: Vector2,
+      direction: Direction
+    ): WorldState => {
+      return {
+        currentRobot: {
+          position,
+          direction,
+          isAlive: true
+        },
+        pastRobots: [],
+        maxX,
+        maxY
+      };
+    };
+
+    const buildStateWithDeadRobot = (
+      position: Vector2,
+      direction: Direction
+    ): WorldState => {
+      return {
+        currentRobot: undefined,
+        pastRobots: [
+          {
             position,
             direction,
-            isAlive: true
-          },
-          pastRobots: [],
-          maxX,
-          maxY
-        };
+            isAlive: false
+          }
+        ],
+        maxX,
+        maxY
       };
-
+    };
+    describe("happy case when there is no edge", () => {
       [
         {
           x: 0,
@@ -100,6 +117,71 @@ describe("model", () => {
           const initialState = buildStateWithRobot({ x, y }, direction);
           const actual = moveForward(initialState);
           const expected = buildStateWithRobot({ x: newX, y: newY }, direction);
+          expect(actual).toEqual(expected);
+        });
+      });
+    });
+
+    describe("fall off and die", () => {
+      const maxX = 1;
+      const maxY = 1;
+      const buildStateWithRobot = (
+        position: Vector2,
+        direction: Direction
+      ): WorldState => {
+        return {
+          currentRobot: {
+            position,
+            direction,
+            isAlive: true
+          },
+          pastRobots: [],
+          maxX,
+          maxY
+        };
+      };
+
+      [
+        {
+          x: 0,
+          y: 1,
+          direction: Direction.North,
+          newX: 0,
+          newY: 2,
+          description: "north"
+        },
+        {
+          x: 0,
+          y: 0,
+          direction: Direction.South,
+          newX: 0,
+          newY: -1,
+          description: "south"
+        },
+        {
+          x: 0,
+          y: 0,
+          direction: Direction.West,
+          newX: -1,
+          newY: 0,
+          description: "west"
+        },
+        {
+          x: 1,
+          y: 0,
+          direction: Direction.East,
+          newX: 2,
+          newY: 0,
+          description: "east"
+        }
+      ].forEach(({ x, y, direction, newX, newY, description }) => {
+        it(description, () => {
+          const initialState = buildStateWithRobot({ x, y }, direction);
+          const actual = moveForward(initialState);
+          const expected = buildStateWithDeadRobot(
+            { x: newX, y: newY },
+            direction
+          );
           expect(actual).toEqual(expected);
         });
       });
