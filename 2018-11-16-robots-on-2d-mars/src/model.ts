@@ -1,8 +1,8 @@
 import assert from "assert";
 
-interface Vector2 {
-  x: Number;
-  y: Number;
+export interface Vector2 {
+  x: number;
+  y: number;
 }
 
 export enum Direction {
@@ -15,45 +15,33 @@ export enum Direction {
 interface Robot {
   position: Vector2;
   direction: Direction;
+  isAlive: boolean;
 }
 
-interface WorldState {
-  maxX: Number;
-  maxY: Number;
+export interface WorldState {
+  maxX: number;
+  maxY: number;
 
   currentRobot?: Robot;
   pastRobots: Robot[];
-
-  deathScents: {
-    north: Set<Number>;
-    south: Set<Number>; // y = 0
-    west: Set<Number>; // x = 0
-    east: Set<Number>;
-  };
 }
 
 export const createInitialState = (
-  maxX: Number,
-  maxY: Number
+  maxX: number,
+  maxY: number
 ): Readonly<WorldState> => {
   return {
     maxX,
     maxY,
     currentRobot: undefined,
-    pastRobots: [],
-    deathScents: {
-      north: new Set(),
-      south: new Set(),
-      west: new Set(),
-      east: new Set()
-    }
+    pastRobots: []
   };
 };
 
 export const startRobot = (
   state: Readonly<WorldState>,
-  x: Number,
-  y: Number,
+  x: number,
+  y: number,
   direction: Direction
 ) => {
   assert(x >= 0);
@@ -66,7 +54,43 @@ export const startRobot = (
     ...state,
     currentRobot: {
       position: { x, y },
-      direction
+      direction,
+      isAlive: true
     }
+  };
+};
+
+const getNewPosition = (position: Vector2, direction: Direction) => {
+  const { x, y } = position;
+  switch (direction) {
+    case Direction.North:
+      return { x, y: y + 1 };
+    case Direction.South:
+      return { x, y: y - 1 };
+    case Direction.West:
+      return { x: x - 1, y };
+    case Direction.East:
+      return { x: x + 1, y };
+  }
+};
+
+export const moveForward = (state: Readonly<WorldState>): WorldState => {
+  assert(!!state.currentRobot);
+  if (!state.currentRobot) {
+    // throw here rather than just assert, as a hint to the type checker
+    throw new assert.AssertionError({ message: "No current robot" });
+  }
+  const { direction, position } = state.currentRobot;
+
+  const newPosition = getNewPosition(position, direction);
+
+  const nextCurrentRobot: Robot | undefined = {
+    ...state.currentRobot,
+    position: newPosition
+  };
+
+  return {
+    ...state,
+    currentRobot: nextCurrentRobot
   };
 };
