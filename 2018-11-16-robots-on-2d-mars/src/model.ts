@@ -138,6 +138,19 @@ export const getRightDirection = (direction: Direction): Direction => {
   }
 };
 
+export const getLeftDirection = (direction: Direction): Direction => {
+  switch (direction) {
+    case Direction.North:
+      return Direction.West;
+    case Direction.East:
+      return Direction.North;
+    case Direction.South:
+      return Direction.East;
+    case Direction.West:
+      return Direction.South;
+  }
+};
+
 export const turnRight = (state: Readonly<WorldState>): WorldState => {
   if (!state.currentRobot) {
     // throw here rather than just assert, as a hint to the type checker
@@ -148,6 +161,20 @@ export const turnRight = (state: Readonly<WorldState>): WorldState => {
     currentRobot: {
       ...state.currentRobot,
       direction: getRightDirection(state.currentRobot.direction)
+    }
+  };
+};
+
+export const turnLeft = (state: Readonly<WorldState>): WorldState => {
+  if (!state.currentRobot) {
+    // throw here rather than just assert, as a hint to the type checker
+    throw new assert.AssertionError({ message: "No current robot" });
+  }
+  return {
+    ...state,
+    currentRobot: {
+      ...state.currentRobot,
+      direction: getLeftDirection(state.currentRobot.direction)
     }
   };
 };
