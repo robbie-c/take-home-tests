@@ -88,16 +88,29 @@ export const moveForward = (state: Readonly<WorldState>): WorldState => {
   let nextCurrentRobot;
   let nextPastRobots;
   if (x < 0 || x > state.maxX || y < 0 || y > state.maxY) {
-    // fall off and die
-    nextPastRobots = [
-      ...state.pastRobots,
-      {
-        position: newPosition,
-        direction,
-        isAlive: false
-      }
-    ];
-    nextCurrentRobot = undefined;
+    if (
+      state.pastRobots.find(
+        robot =>
+          !robot.isAlive &&
+          robot.position.x === newPosition.x &&
+          robot.position.y === newPosition.y
+      )
+    ) {
+      // found dead robot at new position, ignore command
+      nextPastRobots = state.pastRobots;
+      nextCurrentRobot = state.currentRobot;
+    } else {
+      // fall off and die
+      nextPastRobots = [
+        ...state.pastRobots,
+        {
+          position: newPosition,
+          direction,
+          isAlive: false
+        }
+      ];
+      nextCurrentRobot = undefined;
+    }
   } else {
     nextPastRobots = state.pastRobots;
     nextCurrentRobot = {

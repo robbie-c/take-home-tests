@@ -78,6 +78,31 @@ describe("model", () => {
         maxY
       };
     };
+
+    const buildStateWithLiveAndDeadRobot = (
+      livePosition: Vector2,
+      liveDirection: Direction,
+      deadPosition: Vector2,
+      deadDirection: Direction
+    ): WorldState => {
+      return {
+        currentRobot: {
+          position: livePosition,
+          direction: liveDirection,
+          isAlive: true
+        },
+        pastRobots: [
+          {
+            position: deadPosition,
+            direction: deadDirection,
+            isAlive: false
+          }
+        ],
+        maxX,
+        maxY
+      };
+    };
+
     describe("happy case when there is no edge", () => {
       [
         {
@@ -123,24 +148,6 @@ describe("model", () => {
     });
 
     describe("fall off and die", () => {
-      const maxX = 1;
-      const maxY = 1;
-      const buildStateWithRobot = (
-        position: Vector2,
-        direction: Direction
-      ): WorldState => {
-        return {
-          currentRobot: {
-            position,
-            direction,
-            isAlive: true
-          },
-          pastRobots: [],
-          maxX,
-          maxY
-        };
-      };
-
       [
         {
           x: 0,
@@ -183,6 +190,53 @@ describe("model", () => {
             direction
           );
           expect(actual).toEqual(expected);
+        });
+      });
+    });
+    describe("ignore command and don't fall off due to previous scent", () => {
+      [
+        {
+          x: 0,
+          y: 1,
+          direction: Direction.North,
+          deadX: 0,
+          deadY: 2,
+          description: "north"
+        },
+        {
+          x: 0,
+          y: 0,
+          direction: Direction.South,
+          deadX: 0,
+          deadY: -1,
+          description: "south"
+        },
+        {
+          x: 0,
+          y: 0,
+          direction: Direction.West,
+          deadX: -1,
+          deadY: 0,
+          description: "west"
+        },
+        {
+          x: 1,
+          y: 0,
+          direction: Direction.East,
+          deadX: 2,
+          deadY: 0,
+          description: "east"
+        }
+      ].forEach(({ x, y, direction, deadX, deadY, description }) => {
+        it(description, () => {
+          const initialState = buildStateWithLiveAndDeadRobot(
+            { x, y },
+            direction,
+            { x: deadX, y: deadY },
+            direction
+          );
+          const actual = moveForward(initialState);
+          expect(actual).toEqual(initialState);
         });
       });
     });
