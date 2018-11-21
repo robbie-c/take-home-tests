@@ -6,10 +6,10 @@ export interface Vector2 {
 }
 
 export enum Direction {
-  North,
-  South,
-  East,
-  West
+  North = "N",
+  South = "S",
+  East = "E",
+  West = "W"
 }
 
 interface Robot {
