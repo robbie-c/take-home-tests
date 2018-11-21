@@ -155,42 +155,31 @@ describe("model", () => {
           x: 0,
           y: 1,
           direction: Direction.North,
-          newX: 0,
-          newY: 2,
           description: "north"
         },
         {
           x: 0,
           y: 0,
           direction: Direction.South,
-          newX: 0,
-          newY: -1,
           description: "south"
         },
         {
           x: 0,
           y: 0,
           direction: Direction.West,
-          newX: -1,
-          newY: 0,
           description: "west"
         },
         {
           x: 1,
           y: 0,
           direction: Direction.East,
-          newX: 2,
-          newY: 0,
           description: "east"
         }
-      ].forEach(({ x, y, direction, newX, newY, description }) => {
+      ].forEach(({ x, y, direction, description }) => {
         it(description, () => {
           const initialState = buildStateWithRobot({ x, y }, direction);
           const actual = moveForward(initialState);
-          const expected = buildStateWithDeadRobot(
-            { x: newX, y: newY },
-            direction
-          );
+          const expected = buildStateWithDeadRobot({ x, y }, direction);
           expect(actual).toEqual(expected);
         });
       });
@@ -201,40 +190,32 @@ describe("model", () => {
           x: 0,
           y: 1,
           direction: Direction.North,
-          deadX: 0,
-          deadY: 2,
           description: "north"
         },
         {
           x: 0,
           y: 0,
           direction: Direction.South,
-          deadX: 0,
-          deadY: -1,
           description: "south"
         },
         {
           x: 0,
           y: 0,
           direction: Direction.West,
-          deadX: -1,
-          deadY: 0,
           description: "west"
         },
         {
           x: 1,
           y: 0,
           direction: Direction.East,
-          deadX: 2,
-          deadY: 0,
           description: "east"
         }
-      ].forEach(({ x, y, direction, deadX, deadY, description }) => {
+      ].forEach(({ x, y, direction, description }) => {
         it(description, () => {
           const initialState = buildStateWithLiveAndDeadRobot(
             { x, y },
             direction,
-            { x: deadX, y: deadY },
+            { x, y },
             direction
           );
           const actual = moveForward(initialState);

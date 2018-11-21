@@ -90,9 +90,11 @@ export const moveForward = (state: Readonly<WorldState>): WorldState => {
     if (
       state.pastRobots.find(
         robot =>
+          // should we check direction here as well for corner case?
+          // spec implies no but should raise and clarify
           !robot.isAlive &&
-          robot.position.x === newPosition.x &&
-          robot.position.y === newPosition.y
+          robot.position.x === position.x &&
+          robot.position.y === position.y
       )
     ) {
       // found dead robot at new position, ignore command
@@ -103,7 +105,7 @@ export const moveForward = (state: Readonly<WorldState>): WorldState => {
       nextPastRobots = [
         ...state.pastRobots,
         {
-          position: newPosition,
+          position,
           direction,
           isAlive: false
         }
