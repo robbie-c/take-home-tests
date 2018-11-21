@@ -1,7 +1,24 @@
-import { parseFirstLine, parseRobotStartLine } from "./controller";
-import { Direction } from "./model";
+import {
+  getRobotOutputString,
+  parseFirstLine,
+  parseRobotStartLine
+} from "./controller";
+import { Direction, Robot } from "./model";
 
 describe("controller", () => {
+  const buildRobot = (
+    x: number,
+    y: number,
+    direction: Direction,
+    isAlive: boolean = true
+  ): Robot => {
+    return {
+      position: { x, y },
+      direction,
+      isAlive
+    };
+  };
+
   describe("parseFirstLine", () => {
     it("should parse a correct first line", () => {
       const input = "5 3";
@@ -87,6 +104,22 @@ describe("controller", () => {
       const input = "1 1 A";
       const result = parseRobotStartLine(input);
       expect(result).toEqual(undefined);
+    });
+  });
+
+  describe("getRobotOutputString", () => {
+    it("should output the position of a live robot", () => {
+      const robot = buildRobot(1, 1, Direction.East);
+      const actual = getRobotOutputString(robot);
+      const expected = "1 1 E";
+      expect(actual).toEqual(expected);
+    });
+
+    it("should output the position of a dead robot", () => {
+      const robot = buildRobot(2, 3, Direction.North, false);
+      const actual = getRobotOutputString(robot);
+      const expected = "2 3 N LOST";
+      expect(actual).toEqual(expected);
     });
   });
 });

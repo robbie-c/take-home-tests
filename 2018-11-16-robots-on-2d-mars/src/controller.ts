@@ -1,4 +1,4 @@
-import { Direction } from "./model";
+import { Direction, Robot } from "./model";
 
 export const parseFirstLine = (line: string) => {
   const match = /^([0-9]+)\s+([0-9]+)\s*$/.exec(line);
@@ -26,4 +26,16 @@ export const parseRobotStartLine = (line: string) => {
     y: parseInt(match![2]),
     direction: directionLetter as Direction
   };
+};
+
+export const getRobotOutputString = ({
+  position: { x, y },
+  direction,
+  isAlive
+}: Robot) => {
+  let positionAndDirection = `${x} ${y} ${direction}`;
+  if (!isAlive) {
+    return (positionAndDirection += " LOST");
+  }
+  return positionAndDirection;
 };

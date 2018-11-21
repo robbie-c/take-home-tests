@@ -12,7 +12,7 @@ export enum Direction {
   West = "W"
 }
 
-interface Robot {
+export interface Robot {
   position: Vector2;
   direction: Direction;
   isAlive: boolean;
