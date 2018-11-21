@@ -39,3 +39,10 @@ export const getRobotOutputString = ({
   }
   return positionAndDirection;
 };
+
+const whitespaceOnlyRe = /^\s*$/;
+
+export const splitLines = (input: string): string[] => {
+  const lines = input.split(/[\r\n]+/);
+  return lines.filter(line => !whitespaceOnlyRe.test(line));
+};

@@ -1,7 +1,8 @@
 import {
   getRobotOutputString,
   parseFirstLine,
-  parseRobotStartLine
+  parseRobotStartLine,
+  splitLines
 } from "./parsing";
 import { Direction, Robot } from "./model";
 
@@ -120,6 +121,32 @@ describe("parsing", () => {
       const actual = getRobotOutputString(robot);
       const expected = "2 3 N LOST";
       expect(actual).toEqual(expected);
+    });
+  });
+
+  describe("splitLines", () => {
+    it("should split lines", () => {
+      const input = `1
+2`;
+      const result = splitLines(input);
+      expect(result).toEqual(["1", "2"]);
+    });
+
+    it("should ignore blank lines", () => {
+      const input = `1
+
+2`;
+      const result = splitLines(input);
+      expect(result).toEqual(["1", "2"]);
+    });
+
+    it("should remove whitespace only lines", () => {
+      const input = `1
+      
+2
+`;
+      const result = splitLines(input);
+      expect(result).toEqual(["1", "2"]);
     });
   });
 });
