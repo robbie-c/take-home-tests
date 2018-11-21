@@ -6,12 +6,15 @@
   "license": "n/a",
   "private": true,
   "dependencies": {
+    "@types/minimist": "^1.2.0",
     "@types/node": "^10.12.9",
+    "minimist": "^1.2.0",
     "ts-node": "^7.0.1",
     "typescript": "^3.1.6"
   },
   "scripts": {
     "start": "ts-node src/cli.ts",
+    "startWithExampleInput": "cat src/testData/exampleInput.txt | ts-node src/cli.ts",
     "test": "jest",
     "prettier": "prettier --write **/*.ts"
   },

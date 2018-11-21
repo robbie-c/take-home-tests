@@ -56,5 +56,20 @@ export const processRobotMovementLine = (state: WorldState, line: string) => {
 };
 
 export const produceOutput = (state: WorldState) => {
-  return state.pastRobots.map(robot => getRobotOutputString(robot)).join("\n");
+  return (
+    state.pastRobots.map(robot => getRobotOutputString(robot)).join("\n") + "\n"
+  );
+};
+
+export const processInput = (input: string): string => {
+  const lines = splitLines(input);
+  assert(lines.length > 0);
+  let state = processFirstLine(lines[0]);
+
+  for (let i = 1; i < lines.length; i += 2) {
+    state = processRobotStartLine(state, lines[i]);
+    state = processRobotMovementLine(state, lines[i + 1]);
+  }
+
+  return produceOutput(state);
 };
