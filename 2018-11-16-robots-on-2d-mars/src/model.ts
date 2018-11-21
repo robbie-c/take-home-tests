@@ -178,3 +178,14 @@ export const turnLeft = (state: Readonly<WorldState>): WorldState => {
     }
   };
 };
+
+export const finishRobot = (state: Readonly<WorldState>): WorldState => {
+  if (!state.currentRobot) {
+    return state;
+  }
+  return {
+    ...state,
+    currentRobot: undefined,
+    pastRobots: [...state.pastRobots, state.currentRobot]
+  };
+};
