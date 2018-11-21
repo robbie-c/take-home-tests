@@ -2,10 +2,10 @@ import {
   getRobotOutputString,
   parseFirstLine,
   parseRobotStartLine
-} from "./controller";
+} from "./parsing";
 import { Direction, Robot } from "./model";
 
-describe("controller", () => {
+describe("parsing", () => {
   const buildRobot = (
     x: number,
     y: number,
