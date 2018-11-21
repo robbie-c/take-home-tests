@@ -22,7 +22,8 @@ describe("controller", () => {
   const buildWorldWithPastRobot = (
     x: number,
     y: number,
-    direction: Direction
+    direction: Direction,
+    isAlive: boolean = true
   ): WorldState => {
     return {
       maxX: 1,
@@ -31,7 +32,7 @@ describe("controller", () => {
         {
           position: { x, y },
           direction,
-          isAlive: true
+          isAlive
         }
       ],
       currentRobot: undefined
@@ -40,6 +41,7 @@ describe("controller", () => {
 
   const initialState = buildWorldWithRobot(0, 0, Direction.North);
   const movedState = buildWorldWithRobot(0, 1, Direction.North);
+  const deadState = buildWorldWithPastRobot(0, 1, Direction.North, false);
   const finishedState = buildWorldWithPastRobot(0, 1, Direction.North);
 
   jest.mock("./model.ts");
@@ -47,48 +49,58 @@ describe("controller", () => {
   let controller = require("./controller");
 
   describe("processRobotMovementLine", () => {
-    beforeEach(() => {
+    describe("happy cases", () => {
+      beforeEach(() => {
+        jest.resetAllMocks();
+        model.moveForward.mockReturnValueOnce(movedState);
+        model.turnLeft.mockReturnValueOnce(movedState);
+        model.turnRight.mockReturnValueOnce(movedState);
+        model.finishRobot.mockReturnValueOnce(finishedState);
+      });
+
+      it("calls moveForward on F", () => {
+        const result = controller.processRobotMovementLine(initialState, "F");
+        expect(model.moveForward).toBeCalledWith(initialState);
+        expect(model.turnLeft).toBeCalledTimes(0);
+        expect(model.turnRight).toBeCalledTimes(0);
+        expect(model.finishRobot).toBeCalledWith(movedState);
+        expect(result).toEqual(finishedState);
+      });
+
+      it("calls turnRight on R", () => {
+        const result = controller.processRobotMovementLine(initialState, "R");
+        expect(model.moveForward).toBeCalledTimes(0);
+        expect(model.turnLeft).toBeCalledTimes(0);
+        expect(model.turnRight).toBeCalledWith(initialState);
+        expect(model.finishRobot).toBeCalledWith(movedState);
+        expect(result).toEqual(finishedState);
+      });
+
+      it("calls turnLeft on L", () => {
+        const result = controller.processRobotMovementLine(initialState, "L");
+        expect(model.moveForward).toBeCalledTimes(0);
+        expect(model.turnLeft).toBeCalledWith(initialState);
+        expect(model.turnRight).toBeCalledTimes(0);
+        expect(model.finishRobot).toBeCalledWith(movedState);
+        expect(result).toEqual(finishedState);
+      });
+
+      it("handles instructions in order", () => {
+        const result = controller.processRobotMovementLine(initialState, "FRL");
+        // @ts-ignore
+        expect(model.moveForward).toHaveBeenCalledBefore(model.turnRight);
+        // @ts-ignore
+        expect(model.turnRight).toHaveBeenCalledBefore(model.turnLeft);
+        expect(result).toEqual(finishedState);
+      });
+    });
+
+    it("should not continue executing after robot falls off", () => {
       jest.resetAllMocks();
-      model.moveForward.mockReturnValueOnce(movedState);
-      model.turnLeft.mockReturnValueOnce(movedState);
-      model.turnRight.mockReturnValueOnce(movedState);
-      model.finishRobot.mockReturnValueOnce(finishedState);
-    });
-
-    it("calls moveForward on F", () => {
-      const result = controller.processRobotMovementLine(initialState, "F");
-      expect(model.moveForward).toBeCalledWith(initialState);
-      expect(model.turnLeft).toBeCalledTimes(0);
-      expect(model.turnRight).toBeCalledTimes(0);
-      expect(model.finishRobot).toBeCalledWith(movedState);
-      expect(result).toEqual(finishedState);
-    });
-
-    it("calls turnRight on R", () => {
-      const result = controller.processRobotMovementLine(initialState, "R");
-      expect(model.moveForward).toBeCalledTimes(0);
-      expect(model.turnLeft).toBeCalledTimes(0);
-      expect(model.turnRight).toBeCalledWith(initialState);
-      expect(model.finishRobot).toBeCalledWith(movedState);
-      expect(result).toEqual(finishedState);
-    });
-
-    it("calls turnLeft on L", () => {
-      const result = controller.processRobotMovementLine(initialState, "L");
-      expect(model.moveForward).toBeCalledTimes(0);
-      expect(model.turnLeft).toBeCalledWith(initialState);
-      expect(model.turnRight).toBeCalledTimes(0);
-      expect(model.finishRobot).toBeCalledWith(movedState);
-      expect(result).toEqual(finishedState);
-    });
-
-    it("handles instructions in order", () => {
-      const result = controller.processRobotMovementLine(initialState, "FRL");
-      // @ts-ignore
-      expect(model.moveForward).toHaveBeenCalledBefore(model.turnRight);
-      // @ts-ignore
-      expect(model.turnRight).toHaveBeenCalledBefore(model.turnLeft);
-      expect(result).toEqual(finishedState);
+      model.moveForward.mockReturnValueOnce(deadState);
+      const result = controller.processRobotMovementLine(initialState, "FF");
+      expect(model.moveForward).toHaveBeenCalledTimes(1);
+      expect(result).toEqual(deadState);
     });
   });
 });

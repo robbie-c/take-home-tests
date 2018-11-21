@@ -30,7 +30,9 @@ export const processRobotStartLine = (state: WorldState, line: string) => {
 export const processRobotMovementLine = (state: WorldState, line: string) => {
   assert(line);
   let currentState = state;
-  line.split("").forEach(char => {
+  const instructions = line.split("");
+
+  for (let char of instructions) {
     switch (char) {
       case "F":
         currentState = moveForward(currentState);
@@ -42,7 +44,13 @@ export const processRobotMovementLine = (state: WorldState, line: string) => {
         currentState = turnLeft(currentState);
         break;
     }
-  });
+
+    if (!currentState.currentRobot) {
+      // robot dead, ignore further instructions
+      return currentState;
+    }
+  }
+
   currentState = finishRobot(currentState);
   return currentState;
 };
